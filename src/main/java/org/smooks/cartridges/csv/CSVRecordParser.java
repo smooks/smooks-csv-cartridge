@@ -16,22 +16,25 @@
 
 package org.smooks.cartridges.csv;
 
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvValidationException;
+import org.smooks.cartridges.flatfile.variablefield.VariableFieldRecordParser;
+import org.xml.sax.InputSource;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
 
-import org.smooks.cartridges.flatfile.variablefield.VariableFieldRecordParser;
-import org.xml.sax.InputSource;
-
 /**
  * CSV record parser.
- * 
+ *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class CSVRecordParser<T extends CSVRecordParserFactory> extends VariableFieldRecordParser<T> {
 
-    private au.com.bytecode.opencsv.CSVReader csvLineReader;
+    private com.opencsv.CSVReader csvLineReader;
 
     /**
      * {@inheritDoc}
@@ -46,7 +49,7 @@ public class CSVRecordParser<T extends CSVRecordParserFactory> extends VariableF
 
         // Create the CSV line reader...
         T factory = getFactory();
-        csvLineReader = new au.com.bytecode.opencsv.CSVReader(reader, factory.getSeparator(), factory.getQuoteChar(), factory.getEscapeChar());
+        csvLineReader = new CSVReaderBuilder(reader).withCSVParser(new CSVParserBuilder().withSeparator(factory.getSeparator()).withQuoteChar(factory.getQuoteChar()).withEscapeChar(factory.getEscapeChar()).build()).build();
     }
 
     /**
@@ -54,7 +57,12 @@ public class CSVRecordParser<T extends CSVRecordParserFactory> extends VariableF
      */
     @Override
     public List<String> nextRecordFieldValues() throws IOException {
-        String[] csvRecord = csvLineReader.readNext();
+        String[] csvRecord;
+        try {
+            csvRecord = csvLineReader.readNext();
+        } catch (CsvValidationException e) {
+            throw new IOException(e);
+        }
 
         if (csvRecord == null) {
             return null;

@@ -21,10 +21,10 @@ import org.smooks.FilterSettings;
 import org.smooks.Smooks;
 import org.smooks.SmooksException;
 import org.smooks.SmooksUtil;
-import org.smooks.cdr.SmooksConfigurationException;
-import org.smooks.container.ExecutionContext;
 import org.smooks.cartridges.flatfile.Binding;
 import org.smooks.cartridges.flatfile.BindingType;
+import org.smooks.cdr.SmooksConfigurationException;
+import org.smooks.container.ExecutionContext;
 import org.smooks.payload.JavaResult;
 import org.smooks.payload.StringResult;
 import org.xml.sax.SAXException;
@@ -42,35 +42,6 @@ import static org.junit.Assert.*;
  */
 @SuppressWarnings("unchecked")
 public class CSVReaderTest {
-
-    @Test
-    public void test_02() throws SmooksException, IOException, SAXException {
-        Smooks smooks = new Smooks(getClass().getResourceAsStream("/smooks-config-01.xml"));
-
-        ExecutionContext context = smooks.createExecutionContext();
-        String result = SmooksUtil.filterAndSerialize(context, getClass().getResourceAsStream("/input-message-01.csv"),
-                smooks);
-        assertEquals(
-                "<csv-set><csv-record number=\"1\"><firstname>Tom</firstname><lastname>Fennelly</lastname><gender>Male</gender><age>4</age><country>Ireland</country></csv-record><csv-record number=\"2\"><firstname>Mike</firstname><lastname>Fennelly</lastname><gender>Male</gender><age>2</age><country>Ireland</country></csv-record></csv-set>",
-                result);
-    }
-
-    @Test
-    public void test_03() throws SmooksException, IOException, SAXException {
-        test_03("/smooks-config-02.xml");
-        test_03("/smooks-config-03.xml");
-    }
-
-    public void test_03(String config) throws SmooksException, IOException, SAXException {
-        Smooks smooks = new Smooks(getClass().getResourceAsStream(config));
-
-        ExecutionContext context = smooks.createExecutionContext();
-        String result = SmooksUtil.filterAndSerialize(context, getClass().getResourceAsStream("/input-message-02.csv"),
-                smooks);
-        assertEquals(
-                "<csv-set><csv-record number=\"1\"><firstname>Tom</firstname><lastname>Fennelly</lastname><gender>Male</gender><age>4</age><country>Ireland</country></csv-record><csv-record number=\"2\"><firstname>Mike</firstname><lastname>Fennelly</lastname><gender>Male</gender><age>2</age><country>Ireland</country></csv-record></csv-set>",
-                result);
-    }
 
     @Test
     public void test_04() throws SmooksException, IOException, SAXException {

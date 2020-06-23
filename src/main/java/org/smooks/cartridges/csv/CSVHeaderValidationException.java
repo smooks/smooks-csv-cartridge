@@ -56,7 +56,7 @@ public class CSVHeaderValidationException extends SmooksException {
 	private List<String> found;
 
 	public CSVHeaderValidationException(final List<String> expected) {
-		this(expected, new ArrayList<String>());
+		this(expected, new ArrayList<>());
 	}
 
 	public CSVHeaderValidationException(final List<String> expected, final List<String> found) {

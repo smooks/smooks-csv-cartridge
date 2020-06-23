@@ -66,7 +66,7 @@ public class VariableFieldCSVTest {
         smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-14.csv")), result);
         System.out.println(result);
 
-        String expected = StreamUtils.readStreamAsString(getClass().getResourceAsStream("/input-message-14.xml"));
+        String expected = StreamUtils.readStreamAsString(getClass().getResourceAsStream("/input-message-14.xml"), "UTF-8");
         XMLUnit.setIgnoreWhitespace(true);
         XMLAssert.assertXMLEqual(expected, result.toString());
     }

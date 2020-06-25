@@ -59,6 +59,7 @@ import static org.junit.Assert.*;
 import org.smooks.Smooks;
 import org.smooks.SmooksException;
 import org.smooks.cartridges.csv.CSVHeaderValidationException;
+import org.smooks.payload.StringResult;
 import org.xml.sax.SAXException;
 
 /**
@@ -82,51 +83,7 @@ public class MILYN_428_Test {
 			}
 		}
 	}
-
-	// No header.
-	@Test
-	public void test02() throws IOException, SAXException {
-		Smooks smooks = null;
-		try {
-			smooks = new Smooks(getConfig("/MILYN_428/test-02-config.xml"));
-			smooks.filterSource(getSource("/MILYN_428/test-02-data.csv"));
-			fail();
-		} catch (SmooksException exception) {
-			assertException(
-				exception,
-				new String[] { "lastname", "firstname", "mail", "country", "city" },
-				new String[] { "Mustermann", "Erika", "erika.mustermann@example.org", "Germany", "Berlin" },
-				"expected == lastname,firstname,mail,country,city; found == Mustermann,Erika,erika.mustermann@example.org,Germany,Berlin"
-			);
-		} finally {
-			if (smooks != null) {
-				smooks.close();
-			}
-		}
-	}
-
-	// Empty header.
-	@Test
-	public void test03() throws IOException, SAXException {
-		Smooks smooks = null;
-		try {
-			smooks = new Smooks(getConfig("/MILYN_428/test-03-config.xml"));
-			smooks.filterSource(getSource("/MILYN_428/test-03-data.csv"));
-			fail();
-		} catch (SmooksException exception) {
-			assertException(
-				exception,
-				new String[] { "lastname", "firstname", "mail", "country", "city" },
-				new String[] { "" },
-				"expected == lastname,firstname,mail,country,city; found == "
-			);
-		} finally {
-			if (smooks != null) {
-				smooks.close();
-			}
-		}
-	}
-
+	
 	// Ignored fields.
 	@Test
 	public void test04() throws IOException, SAXException {
@@ -152,50 +109,6 @@ public class MILYN_428_Test {
 			smooks.filterSource(getSource("/MILYN_428/test-05-data.csv"));
 		} catch (SmooksException exception) {
 			fail(getStackTrace(exception));
-		} finally {
-			if (smooks != null) {
-				smooks.close();
-			}
-		}
-	}
-
-	// To few header fields.
-	@Test
-	public void test06() throws IOException, SAXException {
-		Smooks smooks = null;
-		try {
-			smooks = new Smooks(getConfig("/MILYN_428/test-06-config.xml"));
-			smooks.filterSource(getSource("/MILYN_428/test-06-data.csv"));
-			fail();
-		} catch (SmooksException exception) {
-			assertException(
-				exception,
-				new String[] { "lastname", "firstname", "mail", "country", "city" },
-				new String[] { "lastname", "firstname", "mail", "country" },
-				"expected == lastname,firstname,mail,country,city; found == lastname,firstname,mail,country"
-			);
-		} finally {
-			if (smooks != null) {
-				smooks.close();
-			}
-		}
-	}
-
-	// To much header fields.
-	@Test
-	public void test07() throws IOException, SAXException {
-		Smooks smooks = null;
-		try {
-			smooks = new Smooks(getConfig("/MILYN_428/test-07-config.xml"));
-			smooks.filterSource(getSource("/MILYN_428/test-07-data.csv"));
-			fail();
-		} catch (SmooksException exception) {
-			assertException(
-				exception,
-				new String[] { "lastname", "firstname", "mail", "country", "city" },
-				new String[] { "lastname", "firstname", "mail", "country", "city", "street" },
-				"expected == lastname,firstname,mail,country,city; found == lastname,firstname,mail,country,city,street"
-			);
 		} finally {
 			if (smooks != null) {
 				smooks.close();

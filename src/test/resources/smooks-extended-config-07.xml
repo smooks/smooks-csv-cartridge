@@ -42,7 +42,7 @@
   =========================LICENSE_END==================================
   -->
 
-<smooks-resource-list xmlns="http://www.milyn.org/xsd/smooks-1.1.xsd" xmlns:csv="http://www.milyn.org/xsd/smooks/csv-1.2.xsd">
+<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-1.2.xsd" xmlns:csv="https://www.smooks.org/xsd/smooks/csv-1.7.xsd">
 
     <csv:reader fields="firstname,lastname,$ignore$,gender,age,country">
         <csv:singleBinding beanId="person" class="org.smooks.cartridges.csv.Person" />

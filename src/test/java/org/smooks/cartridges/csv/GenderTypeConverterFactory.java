@@ -42,57 +42,12 @@
  */
 package org.smooks.cartridges.csv;
 
-/**
- * @author <a href="mailto:tom.fennelly@jboss.com">tom.fennelly@jboss.com</a>
- */
-public class Person {
-    private String firstname;
-    private String lastname;
-    private String country;
-    private Gender gender;
-    private Integer age;
+import org.smooks.converter.TypeConverter;
+import org.smooks.converter.factory.TypeConverterFactory;
 
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public String toString() {
-        return "(" + firstname + ", " + lastname + ", " + country + ", " + gender + ", " + age + ")";
+public class GenderTypeConverterFactory implements TypeConverterFactory<String, Gender> {
+    @Override
+    public TypeConverter<String, Gender> createTypeConverter() {
+        return value -> Enum.valueOf(Gender.class, value);
     }
 }

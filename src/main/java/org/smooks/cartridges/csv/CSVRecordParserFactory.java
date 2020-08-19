@@ -42,9 +42,11 @@
  */
 package org.smooks.cartridges.csv;
 
-import org.smooks.cdr.annotation.ConfigParam;
 import org.smooks.cartridges.flatfile.RecordParser;
 import org.smooks.cartridges.flatfile.variablefield.VariableFieldRecordParserFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * CSV Record Parser factory.
@@ -53,14 +55,16 @@ import org.smooks.cartridges.flatfile.variablefield.VariableFieldRecordParserFac
  */
 public class CSVRecordParserFactory extends VariableFieldRecordParserFactory {
 
-    @ConfigParam(defaultVal = ",")
-    private char separator;
+    @Inject
+    private Character separator = ',';
 
-    @ConfigParam(name = "quote-char", defaultVal = "\"")
-    private char quoteChar;
+    @Inject
+    @Named("quote-char")
+    private Character quoteChar = '\"';
 
-    @ConfigParam(name = "escape-char", defaultVal = "\\")
-    private char escapeChar;
+    @Inject
+    @Named("escape-char")
+    private Character escapeChar = '\\';
 
     public RecordParser newRecordParser() {
         return new CSVRecordParser();

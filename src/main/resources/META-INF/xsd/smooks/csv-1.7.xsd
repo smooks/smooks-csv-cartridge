@@ -2,16 +2,16 @@
 <xs:schema targetNamespace="https://www.smooks.org/xsd/smooks/csv-1.7.xsd"
            elementFormDefault="qualified"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:smooks="https://www.smooks.org/xsd/smooks-1.2.xsd"
-           xmlns:smooks-csv="https://www.smooks.org/xsd/smooks/csv-1.7.xsd">
+           xmlns:smooks="https://www.smooks.org/xsd/smooks-2.0.xsd"
+           xmlns:csv="https://www.smooks.org/xsd/smooks/csv-1.7.xsd">
 
-    <xs:import namespace="https://www.smooks.org/xsd/smooks-1.2.xsd"/>
+    <xs:import namespace="https://www.smooks.org/xsd/smooks-2.0.xsd"/>
 
     <xs:annotation>
         <xs:documentation xml:lang="en">Smooks CSV Reader Configuration</xs:documentation>
     </xs:annotation>
 
-    <xs:element name="reader" type="smooks-csv:reader" substitutionGroup="smooks:abstract-reader">
+    <xs:element name="reader" type="csv:reader" substitutionGroup="smooks:abstract-reader">
     	<xs:annotation>
     		<xs:documentation xml:lang="en">
     			CSV Reader Configuration.
@@ -29,9 +29,9 @@
     	<xs:complexContent>
     		<xs:extension base="smooks:abstract-reader">
                 <xs:choice minOccurs="0" maxOccurs="1">
-                    <xs:element name="singleBinding" type="smooks-csv:binding" />
-                    <xs:element name="listBinding" type="smooks-csv:binding" />
-                    <xs:element name="mapBinding" type="smooks-csv:mapBinding" />
+                    <xs:element name="singleBinding" type="csv:binding" />
+                    <xs:element name="listBinding" type="csv:binding" />
+                    <xs:element name="mapBinding" type="csv:mapBinding" />
                 </xs:choice>
     			<xs:attribute name="fields" type="xs:string">
     				<xs:annotation>
@@ -40,21 +40,21 @@
     					</xs:documentation>
     				</xs:annotation>
     			</xs:attribute>
-    			<xs:attribute name="separator" type="smooks-csv:char" use="optional" default=",">
+    			<xs:attribute name="separator" type="csv:char" use="optional" default=",">
     				<xs:annotation>
     					<xs:documentation xml:lang="en">
     						 Field separator character.  Default of ','.
     					</xs:documentation>
     				</xs:annotation>
     			</xs:attribute>
-    			<xs:attribute name="quote" type="smooks-csv:char" use="optional" default="&#34;">
+    			<xs:attribute name="quote" type="csv:char" use="optional" default="&#34;">
     				<xs:annotation>
     					<xs:documentation xml:lang="en">
     						Quote character.  Default of '"'.
     					</xs:documentation>
     				</xs:annotation>
     			</xs:attribute>
-				<xs:attribute name="escape" type="smooks-csv:char" use="optional" default="&#92;">
+				<xs:attribute name="escape" type="csv:char" use="optional" default="&#92;">
     				<xs:annotation>
     					<xs:documentation xml:lang="en">
     						Escape character.  Default of '\'.
@@ -157,7 +157,7 @@
             </xs:documentation>
     	</xs:annotation>
     	<xs:complexContent>
-    		<xs:extension base="smooks-csv:binding">
+    		<xs:extension base="csv:binding">
                 <xs:attribute name="keyField" type="xs:string" use="required">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">

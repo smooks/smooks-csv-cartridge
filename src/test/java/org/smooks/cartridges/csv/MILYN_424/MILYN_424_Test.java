@@ -43,15 +43,15 @@
 package org.smooks.cartridges.csv.MILYN_424;
 
 import org.junit.Test;
-import org.smooks.Smooks;
-import org.smooks.container.ExecutionContext;
-import org.smooks.delivery.sax.SAXElement;
-import org.smooks.delivery.sax.SAXVisitAfter;
-import org.smooks.javabean.context.BeanContext;
-import org.smooks.payload.StringResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.Attributes;
+import org.smooks.Smooks;
+import org.smooks.container.ExecutionContext;
+import org.smooks.delivery.sax.ng.AfterVisitor;
+import org.smooks.javabean.context.BeanContext;
+import org.smooks.payload.StringResult;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.Source;
@@ -78,28 +78,29 @@ public class MILYN_424_Test {
 
         try {
             smooks = new Smooks(getClass().getResourceAsStream("/MILYN_424/smooks-config.xml"));
-            smooks.addVisitor(new SAXVisitAfter() {
+            smooks.addVisitor(new AfterVisitor() {
                 private Integer n = 0;
 
-                public void visitAfter(final SAXElement element, final ExecutionContext execution) throws IOException {
+                @Override
+                public void visitAfter(final Element element, final ExecutionContext execution) {
                     n++;
 
                     LOGGER.info("n == " + n);
                     LOGGER.info("element.getAttribute(\"number\") == " + element.getAttribute("number"));
                     LOGGER.info("element.getAttribute(\"truncated\") == " + element.getAttribute("truncated"));
 
-                    Attributes attributes = element.getAttributes();
+                    NamedNodeMap attributes = element.getAttributes();
                     assertNotNull(attributes);
 
-                    LOGGER.info("attributes.getIndex(\"number\") == " + attributes.getIndex("number"));
-                    LOGGER.info("attributes.getIndex(\"truncated\") == " + attributes.getIndex("truncated"));
+                    LOGGER.info("attributes.getIndex(\"number\") == " + attributes.getNamedItem("number"));
+                    LOGGER.info("attributes.getIndex(\"truncated\") == " + attributes.getNamedItem("truncated"));
 
                     for (int n = 0; n < attributes.getLength(); n++) {
-                        LOGGER.info("attributes.getURI(" + n + ") == " + attributes.getURI(n));
-                        LOGGER.info("attributes.getLocalName(" + n + ") == " + attributes.getLocalName(n));
-                        LOGGER.info("attributes.getQName(" + n + ") == " + attributes.getQName(n));
-                        LOGGER.info("attributes.getType(" + n + ") == " + attributes.getType(n));
-                        LOGGER.info("attributes.getValue(" + n + ") == " + attributes.getValue(n));
+                        LOGGER.info("attributes.getURI(" + n + ") == " + attributes.item(n).getNamespaceURI());
+                        LOGGER.info("attributes.getLocalName(" + n + ") == " + attributes.item(n).getLocalName());
+                        LOGGER.info("attributes.getQName(" + n + ") == " + attributes.item(n).getNodeName());
+                        LOGGER.info("attributes.getType(" + n + ") == " + attributes.item(n).getNodeType());
+                        LOGGER.info("attributes.getValue(" + n + ") == " + attributes.item(n).getNodeValue());
                     }
 
                     BeanContext beans = execution.getBeanContext();

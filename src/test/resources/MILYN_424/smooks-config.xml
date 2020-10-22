@@ -44,10 +44,6 @@
 
 
 <smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd" xmlns:csv="https://www.smooks.org/xsd/smooks/csv-1.7.xsd" xmlns:javabean="https://www.smooks.org/xsd/smooks/javabean-1.6.xsd">
-	<params>
-		<param name="stream.filter.type">SAX</param>
-	</params>
-
 	<csv:reader fields="lastname,firstname,mail" strict="false"/>
 
 	<javabean:bean beanId="Data" class="org.smooks.cartridges.csv.MILYN_424.Data" createOnElement="/csv-set/csv-record">

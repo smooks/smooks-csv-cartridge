@@ -87,7 +87,6 @@ public class CSVListBinder {
         AssertArgument.isNotNull(recordType, "recordType");
 
         smooks = new Smooks();
-        smooks.setFilterSettings(FilterSettings.DEFAULT_SAX);
         smooks.setReaderConfig(new CSVRecordParserConfigurator(fields)
                 .setBinding(new Binding(beanId, recordType, BindingType.LIST)));
     }

@@ -238,41 +238,21 @@ public class CSVReaderTest {
         assertEquals("22", person.get("age"));
         assertEquals("Ireland", person.get("country"));
     }
+    
 
     @Test
-    public void test_13_xml_dom() throws SmooksException, IOException, SAXException {
-        test_13_xml(FilterSettings.DEFAULT_DOM);
-    }
-
-    @Test
-    public void test_13_xml_sax() throws SmooksException, IOException, SAXException {
-        test_13_xml(FilterSettings.DEFAULT_SAX);
-    }
-
-    @Test
-    public void test_13_programmatic_dom() throws SmooksException, IOException, SAXException {
-        test_13_programmatic(FilterSettings.DEFAULT_DOM);
-    }
-
-    @Test
-    public void test_13_programmatic_sax() throws SmooksException, IOException, SAXException {
-        test_13_programmatic(FilterSettings.DEFAULT_SAX);
-    }
-
-    public void test_13_xml(FilterSettings filterSettings) throws SmooksException, IOException, SAXException {
+    public void test_13_xml() throws SmooksException, IOException, SAXException {
         Smooks smooks = new Smooks(getClass().getResourceAsStream("/smooks-extended-config-09.xml"));
-        smooks.setFilterSettings(filterSettings);
         test_13(smooks);
     }
 
-    public void test_13_programmatic(FilterSettings filterSettings) throws SmooksException
-    {
+    @Test
+    public void test_13_programmatic() throws SmooksException {
         Smooks smooks = new Smooks();
 
         smooks.setReaderConfig(new CSVRecordParserConfigurator("firstname,lastname,$ignore$,gender,age,country")
                 .setBinding(new Binding("people", Person.class, BindingType.MAP).setKeyField("age")));
 
-        smooks.setFilterSettings(filterSettings);
         test_13(smooks);
     }
 
@@ -292,39 +272,19 @@ public class CSVReaderTest {
     }
 
     @Test
-    public void test_14_xml_dom() throws SmooksException, IOException, SAXException {
-        test_14_xml(FilterSettings.DEFAULT_DOM);
-    }
-
-    @Test
-    public void test_14_xml_sax() throws SmooksException, IOException, SAXException {
-        test_14_xml(FilterSettings.DEFAULT_SAX);
-    }
-
-    @Test
-    public void test_14_programmatic_dom() throws SmooksException, IOException, SAXException {
-        test_14_programmatic(FilterSettings.DEFAULT_DOM);
-    }
-
-    @Test
-    public void test_14_programmatic_sax() throws SmooksException, IOException, SAXException {
-        test_14_programmatic(FilterSettings.DEFAULT_SAX);
-    }
-
-    public void test_14_xml(FilterSettings filterSettings) throws SmooksException, IOException, SAXException {
+    public void test_14_xml() throws SmooksException, IOException, SAXException {
         Smooks smooks = new Smooks(getClass().getResourceAsStream("/smooks-extended-config-10.xml"));
-        smooks.setFilterSettings(filterSettings);
         test_14(smooks);
     }
 
-    public void test_14_programmatic(FilterSettings filterSettings) throws SmooksException
+    @Test
+    public void test_14_programmatic() throws SmooksException
     {
         Smooks smooks = new Smooks();
 
         smooks.setReaderConfig(new CSVRecordParserConfigurator("firstname,lastname,$ignore$,gender,age,country")
                 .setBinding(new Binding("people", HashMap.class, BindingType.MAP).setKeyField("firstname")));
 
-        smooks.setFilterSettings(filterSettings);
         test_14(smooks);
     }
 

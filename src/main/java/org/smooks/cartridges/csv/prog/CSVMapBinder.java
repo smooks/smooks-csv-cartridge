@@ -87,7 +87,6 @@ public class CSVMapBinder {
         AssertArgument.isNotNullAndNotEmpty(keyField, "keyField");
 
         smooks = new Smooks();
-        smooks.setFilterSettings(FilterSettings.DEFAULT_SAX);
         smooks.setReaderConfig(new CSVRecordParserConfigurator(fields)
                 .setBinding(new Binding(beanId, recordType, BindingType.MAP).setKeyField(keyField)));
     }

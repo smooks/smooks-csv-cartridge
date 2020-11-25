@@ -45,7 +45,7 @@ package org.smooks.cartridges.csv;
 import java.util.List;
 
 import org.smooks.assertion.AssertArgument;
-import org.smooks.cdr.SmooksResourceConfiguration;
+import org.smooks.cdr.ResourceConfig;
 import org.smooks.cartridges.flatfile.variablefield.VariableFieldRecordParserConfigurator;
 
 /**
@@ -108,7 +108,7 @@ public class CSVRecordParserConfigurator extends VariableFieldRecordParserConfig
         return this;
     }
 
-    public List<SmooksResourceConfiguration> toConfig() {
+    public List<ResourceConfig> toConfig() {
         getParameters().setProperty("fields", csvFields);
         getParameters().setProperty("separator", Character.toString(separatorChar));
         getParameters().setProperty("quote-char", Character.toString(quoteChar));

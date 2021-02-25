@@ -62,13 +62,14 @@
 package org.smooks.cartridges.csv;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.smooks.Smooks;
-import org.smooks.payload.StringResult;
+import org.smooks.io.payload.StringResult;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author <a href="mailto:julien.sirocchi@gmail.com">julien.sirocchi@gmail.com</a>

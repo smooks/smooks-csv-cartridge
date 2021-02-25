@@ -43,19 +43,18 @@
 package org.smooks.cartridges.csv.prog;
 
 import org.smooks.Smooks;
-import org.smooks.FilterSettings;
+import org.smooks.assertion.AssertArgument;
 import org.smooks.cartridges.csv.CSVRecordParserConfigurator;
 import org.smooks.cartridges.flatfile.Binding;
 import org.smooks.cartridges.flatfile.BindingType;
-import org.smooks.payload.JavaResult;
-import org.smooks.assertion.AssertArgument;
+import org.smooks.io.payload.JavaResult;
 
 import javax.xml.transform.stream.StreamSource;
-import java.util.UUID;
-import java.util.Map;
-import java.io.Reader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * CSV {@link java.util.Map} Binder class.

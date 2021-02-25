@@ -42,25 +42,19 @@
  */
 package org.smooks.cartridges.csv.MILYN_428;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.Arrays;
+import org.junit.Test;
+import org.smooks.Smooks;
+import org.smooks.api.SmooksException;
+import org.smooks.cartridges.csv.CSVHeaderValidationException;
+import org.xml.sax.SAXException;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
+import java.io.*;
+import java.util.Arrays;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
-import org.smooks.Smooks;
-import org.smooks.SmooksException;
-import org.smooks.cartridges.csv.CSVHeaderValidationException;
-import org.smooks.payload.StringResult;
-import org.xml.sax.SAXException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * 

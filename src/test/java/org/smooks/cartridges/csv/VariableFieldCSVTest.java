@@ -42,12 +42,12 @@
  */
 package org.smooks.cartridges.csv;
 
-import org.junit.Test;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Test;
 import org.smooks.Smooks;
 import org.smooks.io.StreamUtils;
-import org.smooks.payload.StringResult;
+import org.smooks.io.payload.StringResult;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;

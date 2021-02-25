@@ -43,7 +43,7 @@
 package org.smooks.cartridges.csv;
 
 import org.apache.commons.lang.StringUtils;
-import org.smooks.SmooksException;
+import org.smooks.api.SmooksException;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -43,6 +43,7 @@
   -->
 
 
-<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd" xmlns:csv="https://www.smooks.org/xsd/smooks/csv-1.7.xsd" xmlns:javabean="https://www.smooks.org/xsd/smooks/javabean-1.6.xsd">
+<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd"
+                      xmlns:csv="https://www.smooks.org/xsd/smooks/csv-1.7.xsd">
 	<csv:reader fields="lastname,firstname,mail,country,city"/>
 </smooks-resource-list>

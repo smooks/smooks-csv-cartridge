@@ -42,11 +42,11 @@
  */
 package org.smooks.cartridges.csv;
 
-import java.util.List;
-
+import org.smooks.api.resource.config.ResourceConfig;
 import org.smooks.assertion.AssertArgument;
-import org.smooks.cdr.ResourceConfig;
 import org.smooks.cartridges.flatfile.variablefield.VariableFieldRecordParserConfigurator;
+
+import java.util.List;
 
 /**
  * CSV Record Parser configurator.

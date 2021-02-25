@@ -43,16 +43,15 @@
 package org.smooks.cartridges.csv;
 
 import org.junit.Test;
-import org.smooks.FilterSettings;
 import org.smooks.Smooks;
-import org.smooks.SmooksException;
-import org.smooks.SmooksUtil;
+import org.smooks.api.ExecutionContext;
+import org.smooks.api.SmooksConfigException;
+import org.smooks.api.SmooksException;
 import org.smooks.cartridges.flatfile.Binding;
 import org.smooks.cartridges.flatfile.BindingType;
-import org.smooks.cdr.SmooksConfigurationException;
-import org.smooks.container.ExecutionContext;
-import org.smooks.payload.JavaResult;
-import org.smooks.payload.StringResult;
+import org.smooks.io.payload.JavaResult;
+import org.smooks.io.payload.StringResult;
+import org.smooks.support.SmooksUtil;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;
@@ -325,7 +324,7 @@ public class CSVReaderTest {
         try {
             smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-05.csv")), result);
             fail("Expected SmooksConfigurationException");
-        } catch (SmooksConfigurationException e) {
+        } catch (SmooksConfigException e) {
             assertEquals("Invalid field name 'xxxx'.  Valid names: [firstname, lastname, gender, age, country].",
                     e.getMessage());
         }

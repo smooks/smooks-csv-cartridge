@@ -42,16 +42,17 @@
  */
 package org.smooks.cartridges.csv.MILYN_642;
 
-import java.io.IOException;
 import org.junit.Test;
-import static org.junit.Assert.*;
-
 import org.smooks.Smooks;
-import org.smooks.SmooksException;
-import org.smooks.SmooksUtil;
+import org.smooks.api.ExecutionContext;
+import org.smooks.api.SmooksException;
 import org.smooks.cartridges.csv.CSVRecordParserConfigurator;
-import org.smooks.container.ExecutionContext;
+import org.smooks.support.SmooksUtil;
 import org.xml.sax.SAXException;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Ken Hill

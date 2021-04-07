@@ -1,0 +1,309 @@
+= Smooks CSV Cartridge
+
+image:https://img.shields.io/maven-central/v/org.smooks.cartridges/smooks-csv-cartridge[Maven Central]
+image:https://img.shields.io/nexus/s/org.smooks.cartridges/smooks-csv-cartridge?server=https%3A%2F%2Foss.sonatype.org[Sonatype Nexus (Snapshots)]
+image:https://github.com/smooks/smooks-csv-cartridge/workflows/CI/badge.svg[Build Status]
+
+// tag::smooks-csv-cartridge[]
+This example shows an XML resource configuration of a CSV reader:
+
+.smooks-config.xml
+[source,xml]
+----
+<?xml version="1.0"?>
+<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd"
+                      xmlns:csv="https://www.smooks.org/xsd/smooks/csv-1.7.xsd">
+
+    <!--
+        Configure the CSV to parse the message into a stream of SAX events.
+    -->
+    <csv:reader fields="firstname,lastname,gender,age,country" separator="|" quote="'" skipLines="1" />
+
+</smooks-resource-list>
+----
+
+The above configuration will generate an event stream of the form:
+
+[source,xml]
+----
+<csv-set>
+    <csv-record>
+        <firstname>Tom</firstname>
+        <lastname>Fennelly</lastname>
+        <gender>Male</gender>
+        <age>21</age>
+        <country>Ireland</country>
+    </csv-record>
+    <csv-record>
+        <firstname>Tom</firstname>
+        <lastname>Fennelly</lastname>
+        <gender>Male</gender>
+        <age>21</age>
+        <country>Ireland</country>
+    </csv-record>
+</csv-set>
+----
+
+== Defining fields
+
+Fields can be defined in either of two ways:
+
+. On the `+fields+` attribute of the `+<csv:reader>+` configuration (as shown above).
+. As the first record in the message after setting the `+fieldsInMessage+` attribute of the `+<csv:reader>+` configuration to `+true+`.
+
+The field names must follow the same naming rules like XML element names:
+
+* Names can contain letters, numbers, and other characters
+* Names cannot start with a number or punctuation character
+* Names cannot start with the letters xml (or XML, or Xml, etc...)
+* Names cannot contain spaces
+
+By setting the `+rootElementName+` and `+recordElementName+` attributes you can modify the and element names. The same naming rules apply for these names.
+
+=== Multi-Record Field Definitions
+
+All Flat File based reader configurations (including the CSV reader) support _Multi-Record Field Definitions_, which means that the reader can support CSV message streams containing varying (multiple different types) CSV record types.
+
+Take the following CSV message example:
+
+....
+book,22 Britannia Road,Amanda Hodgkinson
+magazine,Time,April,2011
+magazine,Irish Garden,Jan,2011
+book,The Finkler Question,Howard Jacobson
+....
+
+In this stream, we have 2 record types of "book" and "magazine". We configure the CSV reader to process this stream as follows:
+
+.smooks-config.xml
+[source,xml]
+----
+<csv:reader fields="book[name,author] | magazine[*]" rootElementName="sales" indent="true" />
+----
+
+This reader configuration will generate the following output for the above sample message:
+
+[source,xml]
+----
+<sales>
+    <book number="1">
+        <name>22 Britannia Road</name>
+        <author>Amanda Hodgkinson</author>
+    </book>
+    <magazine number="2">
+        <field_0>Time</field_0>
+        <field_1>April</field_1>
+        <field_2>2011</field_2>
+    </magazine>
+    <magazine number="3">
+        <field_0>Irish Garden</field_0>
+        <field_1>Jan</field_1>
+        <field_2>2011</field_2>
+    </magazine>
+    <book number="4">
+        <name>The Finkler Question</name>
+        <author>Howard Jacobson</author>
+    </book>
+</sales>
+----
+
+Note the syntax in the `+fields+` attribute. Each record definition is separated by the pipe character `+|+`. Each record definition is constructed as _record-name[field-name,field-name]_. _record-name_ is matched against the first field in the incoming message and so used to select the appropriate record definition to be used for outputting that record. Also note how you can use an astrix character ('*') when you don't want to name the record fields. In this case (as when extra/unexpected fields are present in a record), the reader will generate the output field elements using a generated element name e.g. "field_0", "field_1", etc... See the "magazine" record in the previous example.
+
+NOTE: Multi Record Field Definitions are not supported when the fields are defined in the message (`+fieldsInMessage="true"+`).
+
+=== String manipulation functions
+
+String manipulation functions can be defined per field. These functions are executed before that the data is converted into SAX events. The functions are defined after field name, separated with a question mark.
+
+.smooks-config.xml
+[source,xml]
+----
+<?xml version="1.0"?>
+<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd"
+                      xmlns:csv="https://www.smooks.org/xsd/smooks/csv-1.7.xsd">
+
+    <csv:reader fields="lastname?trim.capitalize,country?upper_case" />
+
+</smooks-resource-list>
+----
+
+Take a look at the link:#string-manipulation-functions-for-readers[#String manipulation functions for readers] chapter for the available functions and how the functions can be chained.
+
+=== Ignoring Fields
+
+One or more fields of a CSV record can be ignored by specifying the `+$ignore$+` token in the fields configuration value. You can specify the number of fields to be ignored simply by following the $ignore$ token with a number e.g. `+$ignore$3+` to ignore the next 3 fields. `+$ignore$++` ignores all fields to the end of the CSV record.
+
+.smooks-config.xml
+[source,xml]
+----
+<?xml version="1.0"?>
+<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd"
+                      xmlns:csv="https://www.smooks.org/xsd/smooks/csv-1.7.xsd">
+
+    <csv:reader fields="firstname,$ignore$2,age,$ignore$+" />
+
+</smooks-resource-list>
+----
+
+=== Binding CSV Records to Java
+
+Smooks v1.2 added support for making the binding of CSV records to Java objects a very trivial task. You no longer need to use the Javabean Cartridge directly (i.e. Smooks main Java binding functionality).
+
+NOTE: This feature is not supported for Multi Record Field Definitions (see above), or when the fields are defined in the incoming message (`+fieldsInMessage="true"+`).
+
+A Persons CSV record set such as:
+
+....
+Tom,Fennelly,Male,4,Ireland
+Mike,Fennelly,Male,2,Ireland
+....
+
+Can be bound to a Person of (no getters/setters):
+
+[source,java]
+----
+public class Person {
+    private String firstname;
+    private String lastname;
+    private String country;
+    private Gender gender;
+    private int age;
+}
+
+public enum Gender {
+    Male,
+    Female;
+}
+----
+
+Using a config of the form:
+
+.smooks-config.xml
+[source,xml]
+----
+<?xml version="1.0"?>
+<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd"
+                      xmlns:csv="https://www.smooks.org/xsd/smooks/csv-1.7.xsd">
+
+    <csv:reader fields="firstname,lastname,gender,age,country">
+        <!-- Note how the field names match the property names on the Person class. -->
+        <csv:listBinding beanId="people" class="org.smooks.csv.Person" />
+    </csv:reader>
+
+</smooks-resource-list>
+----
+
+To execute this configuration:
+
+[source,java]
+----
+Smooks smooks = new Smooks(configStream);
+JavaResult result = new JavaResult();
+
+smooks.filterSource(new StreamSource(csvStream), result);
+
+List<Person> people = (List<Person>) result.getBean("people");
+----
+
+Smooks also supports creation of Maps from the CSV record set:
+
+.smooks-config.xml
+[source,xml]
+----
+<?xml version="1.0"?>
+<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd"
+                      xmlns:csv="https://www.smooks.org/xsd/smooks/csv-1.7.xsd">
+
+    <csv:reader fields="firstname,lastname,gender,age,country">
+        <csv:mapBinding beanId="people" class="org.smooks.csv.Person" keyField="firstname" />
+    </csv:reader>
+
+</smooks-resource-list>
+----
+
+The above configuration would produce a map of Person instances, keyed by the "firstname" value of each Person. It would be executed as follows:
+
+[source,java]
+----
+Smooks smooks = new Smooks(configStream);
+JavaResult result = new JavaResult();
+
+smooks.filterSource(new StreamSource(csvStream), result);
+
+Map<String, Person> people = (Map<String, Person>) result.getBean("people");
+
+Person tom = people.get("Tom");
+Person mike = people.get("Mike");
+----
+
+link:#virtual-object-models-maps--lists[Virtual Models] are also supported, so you can define the `+class+` attribute as a `+java.util.Map+` and have the CSV field values bound into Map instances, which are in turn added to a List or a Map.
+
+== Java API
+
+Programmatically configuring the CSV Reader on a Smooks instance is trivial. A number of options are available.
+
+=== Configuring Directly on the Smooks Instance
+
+The following code configures a Smooks instance with a `+CSVReader+` for reading a people record set (see above), binding the record set into a List of Person instances:
+
+[source,java]
+----
+Smooks smooks = new Smooks();
+
+smooks.setReaderConfig(new CSVReaderConfigurator("firstname,lastname,gender,age,country")
+      .setBinding(new CSVBinding("people", Person.class, CSVBindingType.LIST)));
+
+JavaResult result = new JavaResult();
+smooks.filterSource(new StreamSource(csvReader), result);
+
+List<Person> people = (List<Person>) result.getBean("people");
+----
+
+Of course configuring the Java binding is totally optional. The Smooks instance could instead (or in conjunction with) be programmatically configured with other visitors for carrying out other forms of processing on the CSV record set.
+
+=== CSV List and Map Binders
+
+If you're just interested in binding CSV records directly onto a `+List+` or `+Map+` of a Java type that reflects the data in your CSV records, then you can use the `+CSVListBinder+` or `+CSVMapBinder+` classes.
+
+CSVListBinder:
+
+[source,java]
+----
+// Note: The binder instance should be cached and reused...
+CSVListBinder binder = new CSVListBinder("firstname,lastname,gender,age,country", Person.class);
+
+List<Person> people = binder.bind(csvStream);
+----
+
+CSVMapBinder:
+
+[source,java]
+----
+// Note: The binder instance should be cached and reused...
+CSVMapBinder binder = new CSVMapBinder("firstname,lastname,gender,age,country", Person.class, "firstname");
+
+Map<String, Person> people = binder.bind(csvStream);
+----
+
+If you need more control over the binding process, revert back to the lower level APIs:
+
+* link:#configuring-directly-on-the-smooks-instance[Configuring Directly on the Smooks Instance]
+* link:#java-binding[Java Binding]
+
+== Maven Coordinates
+
+.pom.xml
+[source,xml]
+----
+<dependency>
+    <groupId>org.smooks.cartridges</groupId>
+    <artifactId>smooks-csv-cartridge</artifactId>
+    <version>2.0.0-M3</version>
+</dependency>
+----
+
+== XML Namespace
+....
+xmlns:csv="https://www.smooks.org/xsd/smooks/csv-1.7.xsd"
+....
+// end::smooks-csv-cartridge[]

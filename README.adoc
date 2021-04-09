@@ -111,9 +111,9 @@ Note the syntax in the `+fields+` attribute. Each record definition is separated
 
 NOTE: Multi Record Field Definitions are not supported when the fields are defined in the message (`+fieldsInMessage="true"+`).
 
-=== String manipulation functions
+=== String Manipulation Functions
 
-String manipulation functions can be defined per field. These functions are executed before that the data is converted into SAX events. The functions are defined after field name, separated with a question mark.
+Like the fixed-length cartridge, string manipulation functions can be defined per field. These functions are executed before that the data is converted into SAX events. The functions are defined after field name, separated with a question mark.
 
 .smooks-config.xml
 [source,xml]
@@ -127,7 +127,7 @@ String manipulation functions can be defined per field. These functions are exec
 </smooks-resource-list>
 ----
 
-Take a look at the link:#string-manipulation-functions-for-readers[#String manipulation functions for readers] chapter for the available functions and how the functions can be chained.
+Take a look at the fixed-length cartridge's https://github.com/smooks/smooks-fixed-length-cartridge/blob/master/README.adoc#string-manipulation-functions[string manipulation functions] to learn about the available functions and how the functions can be chained.
 
 === Ignoring Fields
 

@@ -42,7 +42,6 @@
  */
 package org.smooks.cartridges.csv;
 
-import org.apache.commons.lang.StringUtils;
 import org.smooks.api.SmooksException;
 
 import java.util.ArrayList;
@@ -78,7 +77,7 @@ public class CSVHeaderValidationException extends SmooksException {
 	}
 
 	private String format(final List<String> strings) {
-		return StringUtils.join(strings, ",");
+		return String.join(",", strings);
 	}
 
 }

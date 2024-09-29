@@ -63,10 +63,10 @@ package org.smooks.cartridges.csv;
 
 import org.junit.Test;
 import org.smooks.Smooks;
-import org.smooks.io.payload.StringResult;
+import org.smooks.io.sink.StringSink;
+import org.smooks.io.source.StreamSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -78,16 +78,13 @@ public class CSVReaderEnhancementsTest {
 
     @Test
     public void testInvalidLines() throws IOException, SAXException {
-        Smooks smooks = new Smooks(getClass().getResourceAsStream("/smooks-config-invalidlines.xml"));
 
-        try {
-            StringResult result = new StringResult();
-            smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-invalidlines.csv")), result);
+        try (Smooks smooks = new Smooks(getClass().getResourceAsStream("/smooks-config-invalidlines.xml"))) {
+            StringSink sink = new StringSink();
+            smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-invalidlines.csv")), sink);
             assertEquals("<csv-set><csv-record number=\"1\"><firstname>Tom</firstname><lastname>Fennelly</lastname><gender>Male</gender><age>4</age><country>Ireland</country></csv-record>" +
                     "<csv-record number=\"2\"><firstname>Mike</firstname><lastname>Fennelly</lastname><gender>Male</gender><age>2</age><country>Ireland</country></csv-record>" +
-                    "<csv-record number=\"3\" truncated=\"true\"><firstname>Julien</firstname><lastname>Sirocchi</lastname><gender>Male</gender></csv-record></csv-set>", result.getResult());
-        } finally {
-            smooks.close();
+                    "<csv-record number=\"3\" truncated=\"true\"><firstname>Julien</firstname><lastname>Sirocchi</lastname><gender>Male</gender></csv-record></csv-set>", sink.getResult());
         }
     }
 

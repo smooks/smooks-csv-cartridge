@@ -48,14 +48,14 @@ import org.slf4j.LoggerFactory;
 import org.smooks.Smooks;
 import org.smooks.api.ExecutionContext;
 import org.smooks.api.bean.context.BeanContext;
+import org.smooks.api.io.Source;
 import org.smooks.api.resource.visitor.sax.ng.AfterVisitor;
-import org.smooks.io.payload.StringResult;
+import org.smooks.io.sink.StringSink;
+import org.smooks.io.source.StreamSource;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -114,7 +114,7 @@ public class MILYN_424_Test {
 
                     String number = element.getAttribute("number");
                     assertNotNull("number == null", number);
-                    assertTrue("number.length() == 0", number.length() != 0);
+                    assertTrue("number.length() == 0", !number.isEmpty());
                     assertEquals(number, n.toString());
 
                     String truncated = element.getAttribute("truncated");
@@ -127,9 +127,9 @@ public class MILYN_424_Test {
                 }
             }, "csv-record");
 
-            StringResult result = new StringResult();
-            smooks.filterSource(smooks.createExecutionContext(), getSource(), result);
-            LOGGER.info(result.toString());
+            StringSink sink = new StringSink();
+            smooks.filterSource(smooks.createExecutionContext(), getSource(), sink);
+            LOGGER.info(sink.toString());
         } finally {
             if (smooks != null) {
                 smooks.close();
@@ -138,7 +138,7 @@ public class MILYN_424_Test {
     }
 
     private Source getSource() throws FileNotFoundException {
-        return new StreamSource(getClass().getResourceAsStream("/MILYN_424/data.csv"));
+        return new StreamSource<>(getClass().getResourceAsStream("/MILYN_424/data.csv"));
     }
 
 }

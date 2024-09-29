@@ -63,10 +63,10 @@ package org.smooks.cartridges.csv;
 
 import org.junit.Test;
 import org.smooks.Smooks;
-import org.smooks.io.payload.StringResult;
+import org.smooks.io.sink.StringSink;
+import org.smooks.io.source.StreamSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -81,8 +81,8 @@ public class CSVReaderIndentTest {
         Smooks smooks = new Smooks(getClass().getResourceAsStream("/smooks-extended-config-12.xml"));
 
         try {
-            StringResult result = new StringResult();
-            smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-01.csv")), result);
+            StringSink sink = new StringSink();
+            smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-01.csv")), sink);
             assertEquals("<csv-set>\n" +
                     "\t<csv-record number=\"1\">\n" +
                     "\t\t<firstname>Tom</firstname>\n" +
@@ -98,7 +98,7 @@ public class CSVReaderIndentTest {
                     "\t\t<age>2</age>\n" +
                     "\t\t<country>Ireland</country>\n" +
                     "\t</csv-record>\n" +
-                    "</csv-set>", result.getResult());
+                    "</csv-set>", sink.getResult());
         } finally {
             smooks.close();
         }

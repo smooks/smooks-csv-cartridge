@@ -45,12 +45,16 @@ package org.smooks.cartridges.csv.MILYN_428;
 import org.junit.Test;
 import org.smooks.Smooks;
 import org.smooks.api.SmooksException;
+import org.smooks.api.io.Source;
 import org.smooks.cartridges.csv.CSVHeaderValidationException;
+import org.smooks.io.source.StreamSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
@@ -64,16 +68,10 @@ public class MILYN_428_Test {
     // No errors.
     @Test
     public void test01() throws IOException, SAXException {
-        Smooks smooks = null;
-        try {
-            smooks = new Smooks(getConfig("/MILYN_428/test-01-config.xml"));
+        try (Smooks smooks = new Smooks(getConfig("/MILYN_428/test-01-config.xml"))) {
             smooks.filterSource(getSource("/MILYN_428/test-01-data.csv"));
         } catch (SmooksException exception) {
             fail(getStackTrace(exception));
-        } finally {
-            if (smooks != null) {
-                smooks.close();
-            }
         }
     }
 
@@ -141,12 +139,12 @@ public class MILYN_428_Test {
         }
     }
 
-    private InputStream getConfig(final String file) throws FileNotFoundException {
+    private InputStream getConfig(final String file) {
         return getClass().getResourceAsStream(file);
     }
 
-    private Source getSource(final String file) throws FileNotFoundException {
-        return new StreamSource(getClass().getResourceAsStream(file));
+    private Source getSource(final String file) {
+        return new StreamSource<>(getClass().getResourceAsStream(file));
     }
 
     public static String getStackTrace(final Throwable throwable) {

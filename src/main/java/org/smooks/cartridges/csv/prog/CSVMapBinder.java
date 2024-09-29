@@ -47,9 +47,9 @@ import org.smooks.assertion.AssertArgument;
 import org.smooks.cartridges.csv.CSVRecordParserConfigurator;
 import org.smooks.cartridges.flatfile.Binding;
 import org.smooks.cartridges.flatfile.BindingType;
-import org.smooks.io.payload.JavaResult;
+import org.smooks.io.sink.JavaSink;
+import org.smooks.io.source.ReaderSource;
 
-import javax.xml.transform.stream.StreamSource;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -93,11 +93,11 @@ public class CSVMapBinder {
     public Map bind(Reader csvStream) {
         AssertArgument.isNotNull(csvStream, "csvStream");
 
-        JavaResult javaResult = new JavaResult();
+        JavaSink javaSink = new JavaSink();
 
-        smooks.filterSource(new StreamSource(csvStream), javaResult);
+        smooks.filterSource(new ReaderSource<>(csvStream), javaSink);
 
-        return (Map) javaResult.getBean(beanId);
+        return (Map) javaSink.getBean(beanId);
     }
 
     public Map bind(InputStream csvStream) {

@@ -49,12 +49,12 @@ import org.smooks.api.SmooksConfigException;
 import org.smooks.api.SmooksException;
 import org.smooks.cartridges.flatfile.Binding;
 import org.smooks.cartridges.flatfile.BindingType;
-import org.smooks.io.payload.JavaResult;
-import org.smooks.io.payload.StringResult;
+import org.smooks.io.sink.JavaSink;
+import org.smooks.io.sink.StringSink;
+import org.smooks.io.source.StreamSource;
 import org.smooks.support.SmooksUtil;
 import org.xml.sax.SAXException;
 
-import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -118,12 +118,12 @@ public class CSVReaderTest {
 
         smooks.setReaderConfig(new CSVRecordParserConfigurator("firstname,lastname,gender,age,country"));
 
-        StringResult result = new StringResult();
-        smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-01.csv")), result);
+        StringSink sink = new StringSink();
+        smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-01.csv")), sink);
 
         assertEquals(
                 "<csv-set><csv-record number=\"1\"><firstname>Tom</firstname><lastname>Fennelly</lastname><gender>Male</gender><age>4</age><country>Ireland</country></csv-record><csv-record number=\"2\"><firstname>Mike</firstname><lastname>Fennelly</lastname><gender>Male</gender><age>2</age><country>Ireland</country></csv-record></csv-set>",
-                result.getResult());
+                sink.getResult());
     }
 
     @Test
@@ -134,22 +134,22 @@ public class CSVReaderTest {
                 .setSeparatorChar('|').setQuoteChar('\'').setSkipLineCount(1).setRootElementName("customers")
                 .setRecordElementName("customer"));
 
-        StringResult result = new StringResult();
-        smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-03.csv")), result);
+        StringSink sink = new StringSink();
+        smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-03.csv")), sink);
 
         assertEquals(
                 "<customers><customer number=\"1\"><firstname>Tom</firstname><lastname>Fennelly</lastname><gender>Male</gender><age>4</age><country>Ireland</country></customer><customer number=\"2\"><firstname>Mike</firstname><lastname>Fennelly</lastname><gender>Male</gender><age>2</age><country>Ireland</country></customer></customers>",
-                result.getResult());
+                sink.getResult());
     }
 
     @Test
     public void test_09_1() throws SmooksException, IOException, SAXException {
         Smooks smooks = new Smooks(getClass().getResourceAsStream("/smooks-extended-config-07.xml"));
 
-        JavaResult result = new JavaResult();
-        smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-05.csv")), result);
+        JavaSink sink = new JavaSink();
+        smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-05.csv")), sink);
 
-        Person person = (Person) result.getBean("person");
+        Person person = (Person) sink.getBean("person");
         assertEquals("(Linda, Coughlan, Ireland, Female, 22)", person.toString());
     }
 
@@ -157,10 +157,10 @@ public class CSVReaderTest {
     public void test_09_2() throws SmooksException, IOException, SAXException {
         Smooks smooks = new Smooks(getClass().getResourceAsStream("/smooks-extended-config-08.xml"));
 
-        JavaResult result = new JavaResult();
-        smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-05.csv")), result);
+        JavaSink sink = new JavaSink();
+        smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-05.csv")), sink);
 
-        List<Person> people = (List<Person>) result.getBean("people");
+        List<Person> people = (List<Person>) sink.getBean("people");
         assertEquals(
                 "[(Tom, Fennelly, Ireland, Male, 4), (Mike, Fennelly, Ireland, Male, 2), (Linda, Coughlan, Ireland, Female, 22)]",
                 people.toString());
@@ -173,10 +173,10 @@ public class CSVReaderTest {
         smooks.setReaderConfig(new CSVRecordParserConfigurator("firstname,lastname,$ignore$,gender,age,country")
                 .setBinding(new Binding("people", Person.class, BindingType.LIST)));
 
-        JavaResult result = new JavaResult();
-        smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-05.csv")), result);
+        JavaSink sink = new JavaSink();
+        smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-05.csv")), sink);
 
-        List<Person> people = (List<Person>) result.getBean("people");
+        List<Person> people = (List<Person>) sink.getBean("people");
         assertEquals(
                 "[(Tom, Fennelly, Ireland, Male, 4), (Mike, Fennelly, Ireland, Male, 2), (Linda, Coughlan, Ireland, Female, 22)]",
                 people.toString());
@@ -189,10 +189,10 @@ public class CSVReaderTest {
         smooks.setReaderConfig(new CSVRecordParserConfigurator("firstname,lastname,$ignore$,gender,age,country")
                 .setBinding(new Binding("person", Person.class, BindingType.SINGLE)));
 
-        JavaResult result = new JavaResult();
-        smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-05.csv")), result);
+        JavaSink sink = new JavaSink();
+        smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-05.csv")), sink);
 
-        Person person = (Person) result.getBean("person");
+        Person person = (Person) sink.getBean("person");
         assertEquals("(Linda, Coughlan, Ireland, Female, 22)", person.toString());
     }
 
@@ -203,10 +203,10 @@ public class CSVReaderTest {
         smooks.setReaderConfig(new CSVRecordParserConfigurator("firstname,lastname,$ignore$,gender,age,country")
                 .setBinding(new Binding("people", HashMap.class, BindingType.LIST)));
 
-        JavaResult result = new JavaResult();
-        smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-05.csv")), result);
+        JavaSink sink = new JavaSink();
+        smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-05.csv")), sink);
 
-        List<Map> people = (List<Map>) result.getBean("people");
+        List<Map> people = (List<Map>) sink.getBean("people");
         Map person;
 
         assertEquals(3, people.size());
@@ -251,10 +251,10 @@ public class CSVReaderTest {
     }
 
     private void test_13(Smooks smooks) {
-        JavaResult result = new JavaResult();
-        smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-05.csv")), result);
+        JavaSink sink = new JavaSink();
+        smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-05.csv")), sink);
 
-        Map<Integer, Person> people = (Map<Integer, Person>) result.getBean("people");
+        Map<Integer, Person> people = (Map<Integer, Person>) sink.getBean("people");
         Person person;
 
         person = people.get(4);
@@ -282,10 +282,10 @@ public class CSVReaderTest {
     }
 
     private void test_14(Smooks smooks) {
-        JavaResult result = new JavaResult();
-        smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-05.csv")), result);
+        JavaSink sink = new JavaSink();
+        smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-05.csv")), sink);
 
-        Map<String, Map> people = (Map<String, Map>) result.getBean("people");
+        Map<String, Map> people = (Map<String, Map>) sink.getBean("people");
         Map person;
 
         person = people.get("Tom");
@@ -314,9 +314,9 @@ public class CSVReaderTest {
     public void test_15() throws SmooksException, IOException, SAXException {
         Smooks smooks = new Smooks(getClass().getResourceAsStream("/smooks-extended-config-11.xml"));
 
-        JavaResult result = new JavaResult();
+        JavaSink sink = new JavaSink();
         try {
-            smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-05.csv")), result);
+            smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-05.csv")), sink);
             fail("Expected SmooksConfigurationException");
         } catch (SmooksConfigException e) {
             assertEquals("Invalid field name 'xxxx'.  Valid names: [firstname, lastname, gender, age, country].",
@@ -363,13 +363,13 @@ public class CSVReaderTest {
     @Test
     public void test_17_wildcard() throws SmooksException, IOException, SAXException {
         Smooks smooks = new Smooks(getClass().getResourceAsStream("/smooks-config-13-wildcard.xml"));
-        StringResult result = new StringResult();
+        StringSink sink = new StringSink();
 
-        smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-13.csv")), result);
+        smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-13.csv")), sink);
 
         assertEquals(
                 "<main-set><record number=\"1\"><field_0>Tom</field_0><field_1>Fennelly</field_1><field_2>Male</field_2><field_3>A</field_3><field_4>B</field_4><field_5>C</field_5><field_6>4</field_6><field_7>IR</field_7><field_8>Ireland</field_8><field_9>2</field_9><field_10>3</field_10></record><record number=\"2\"><field_0>Mike</field_0><field_1>Fennelly</field_1><field_2>Male</field_2><field_3>D</field_3><field_4>F</field_4><field_5>G</field_5><field_6>2</field_6><field_7>IR</field_7><field_8>Ireland</field_8><field_9>4</field_9></record></main-set>",
-                result.toString());
+                sink.toString());
     }
 
     @Test
@@ -379,10 +379,10 @@ public class CSVReaderTest {
         smooks.setReaderConfig(new CSVRecordParserConfigurator("firstname?upper_case,lastname?uncap_first,$ignore$5")
                 .setBinding(new Binding("people", HashMap.class, BindingType.LIST)));
 
-        JavaResult result = new JavaResult();
-        smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-05.csv")), result);
+        JavaSink sink = new JavaSink();
+        smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-05.csv")), sink);
 
-        List<Map> people = (List<Map>) result.getBean("people");
+        List<Map> people = (List<Map>) sink.getBean("people");
         Map person;
 
         person = people.get(0);
@@ -440,11 +440,11 @@ public class CSVReaderTest {
 
         smooks.setReaderConfig(new CSVRecordParserConfigurator("firstname,lastname,gender,age,country"));
 
-        StringResult result = new StringResult();
-        smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-null-field-values.csv")), result);
+        StringSink sink = new StringSink();
+        smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-null-field-values.csv")), sink);
 
         assertEquals(
                 "<csv-set><csv-record number=\"1\"><firstname>Tom</firstname><lastname>Fennelly</lastname><gender>Male</gender><age>4</age><country>Ireland</country></csv-record><csv-record number=\"2\"><firstname>Mike</firstname><lastname>Fennelly</lastname><gender>Male</gender><age>2</age><country>Ireland</country></csv-record><csv-record number=\"3\"><firstname>Joel</firstname><lastname>Pearson</lastname><gender>Male</gender><age></age><country>Australia</country></csv-record></csv-set>",
-                result.getResult());
+                sink.getResult());
     }
 }

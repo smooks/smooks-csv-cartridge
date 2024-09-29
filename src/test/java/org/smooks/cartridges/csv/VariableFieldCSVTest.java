@@ -46,11 +46,11 @@ import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.smooks.Smooks;
-import org.smooks.io.payload.StringResult;
+import org.smooks.io.sink.StringSink;
+import org.smooks.io.source.StreamSource;
 import org.smooks.support.StreamUtils;
 import org.xml.sax.SAXException;
 
-import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 
 /**
@@ -61,13 +61,13 @@ public class VariableFieldCSVTest {
     @Test
     public void test() throws IOException, SAXException {
         Smooks smooks = new Smooks(getClass().getResourceAsStream("/smooks-config-14.xml"));
-        StringResult result = new StringResult();
+        StringSink sink = new StringSink();
 
-        smooks.filterSource(new StreamSource(getClass().getResourceAsStream("/input-message-14.csv")), result);
-        System.out.println(result);
+        smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/input-message-14.csv")), sink);
+        System.out.println(sink);
 
         String expected = StreamUtils.readStreamAsString(getClass().getResourceAsStream("/input-message-14.xml"), "UTF-8");
         XMLUnit.setIgnoreWhitespace(true);
-        XMLAssert.assertXMLEqual(expected, result.toString());
+        XMLAssert.assertXMLEqual(expected, sink.toString());
     }
 }

@@ -62,7 +62,7 @@ public class CSVBinderTest {
         InputStream csvStream = getClass().getResourceAsStream("/input-message-01.csv");
 
         CSVListBinder binder = new CSVListBinder("firstname,lastname,gender,age,country", Person.class);
-        List<Person> people = binder.bind(csvStream);
+        List<Person> people = (List<Person>) binder.bind(csvStream);
 
         assertEquals(2, people.size());
         assertEquals("[(Tom, Fennelly, Ireland, Male, 4), (Mike, Fennelly, Ireland, Male, 2)]", people.toString());
